@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as py
+import time
 
 print ("Codage Predictif")
 
@@ -19,6 +20,10 @@ py.bar(intervalles[:-1], hist, width = 2)
 py.xlim(min(intervalles)-1, max(intervalles))
 py.show()
 
+
+# Debut du Timer
+start_time = time.time()
+
 col=image[:,0]
 image = np.column_stack((col,image))
 col=image[:,len(image[0])-1]
@@ -37,6 +42,9 @@ for i in range(1,len(image)-2):
     for j in range(1,len(image[0])-2):
         imagepred[i][j]=image[i-1][j-1]*matpred[0][0]+image[i-1][j]*matpred[0][1]+image[i][j-1]*matpred[1][0]
         erreur[i][j]=imagepred[i][j]-image[i][j]
+
+temps_execution = time.time() - start_time
+print("Temps d execution : ", time.time() - start_time, " secondes")
 
 hist, intervalles = np.histogram(erreur, bins=100)
 py.bar(intervalles[:-1], hist, width = 2)
