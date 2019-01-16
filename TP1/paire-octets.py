@@ -1,8 +1,11 @@
 import numpy as np
 import regex as re
+import time
 
 Message = "ABAABAABACABBABCDAADACABABAAABAABBABABAABAAB"
 
+# Debut du Timer
+start_time = time.time()
 
 LUToctetsdispo = [True] * 256
 dictsymb =[Message[0]]
@@ -51,6 +54,9 @@ while remplacementpossible == True:
     else:
         remplacementpossible = False
 
+
+temps_execution = time.time() - start_time
+print("Temps d execution : ", time.time() - start_time, " secondes")
 
 print("Longueur = {0}".format(np.ceil(np.log2(nbsymboles))*len(Message)))
 print("Longueur originale = {0}".format(longueurOriginale))
