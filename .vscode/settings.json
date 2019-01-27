@@ -1,4 +1,3 @@
 {
-    "python.linting.pylintEnabled": false,
     "python.pythonPath": "env/bin/python"
 }

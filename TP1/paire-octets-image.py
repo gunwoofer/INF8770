@@ -79,9 +79,9 @@ while remplacementpossible == True:
             debut += 1
         if debut < 0xffff:     
             #On substitut
-            Message = Message.replace(paires[0][0],  unichr(debut))
+            Message = Message.replace(paires[0][0],  chr(debut))
             LUToctetsdispo[debut] = False
-            dictsymb += [[paires[0][0], unichr(debut)]]
+            dictsymb += [[paires[0][0], chr(debut)]]
         else:
             print("Il n y a plus d octets disponible!")
             remplacementpossible = False
