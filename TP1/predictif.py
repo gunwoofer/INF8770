@@ -27,16 +27,17 @@ py.imshow(imageout,cmap = py.get_cmap('gray'))
 
 #image = "001100011110001010101011110001101010111111111111110000000000000000110101010100011101010101"
 
-#image =""
-#for i in range(32761):
-#    if i < 32761 / 2:
-#       image += '0'
-#    else:
-#        image += '1'
-#image = list(image)
-#image = np.reshape(image,(-1,181))
-#image = image.astype('uint8')
-#imageout=image.astype('uint8')
+TAILLE = 2**19
+image =""
+for i in range(TAILLE):
+    if i < TAILLE / 2:
+       image += '0'
+    else:
+        image += '1'
+image = list(image)
+image = np.reshape(image,(-1,1024))
+image = image.astype('uint8')
+imageout=image.astype('uint8')
 #py.imshow(imageout,cmap = py.get_cmap('gray'))
 #py.show()
 # Debut du Timer
