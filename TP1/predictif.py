@@ -4,7 +4,9 @@ import numpy as np
 import matplotlib.pyplot as py
 import time
 from anytree import Node, RenderTree, PreOrderIter, AsciiStyle
+from guppy import hpy
 
+h = hpy()
 print ("Codage Predictif")
 
 def rgb2gray(rgb):
@@ -27,10 +29,10 @@ py.imshow(imageout,cmap = py.get_cmap('gray'))
 
 #image =""
 #for i in range(32761):
-    #if i < 32761 / 2:
-    #   image += '0'
-    #else:
-    #    image += '1'
+#    if i < 32761 / 2:
+#       image += '0'
+#    else:
+#        image += '1'
 #image = list(image)
 #image = np.reshape(image,(-1,181))
 #image = image.astype('uint8')
@@ -177,6 +179,7 @@ for i in range(len(Message)):
     longueur += len(substitution[0][1])
 
 #print(MessageCode)
+print(h.heap())
 print("Temps d execution : ", time.time() - start_time, " secondes")
 
 print("Longueur = {0}".format(longueur))

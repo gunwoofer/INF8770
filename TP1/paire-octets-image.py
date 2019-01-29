@@ -4,8 +4,9 @@ import numpy as np
 import matplotlib.pyplot as py
 import time
 import regex as re
+from guppy import hpy
 
-
+h = hpy()
 print ("Codage paire octets image..")
 
 def rgb2gray(rgb):
@@ -79,9 +80,9 @@ while remplacementpossible == True:
             debut += 1
         if debut < 0xffff:     
             #On substitut
-            Message = Message.replace(paires[0][0],  chr(debut))
+            Message = Message.replace(paires[0][0],  unichr(debut))
             LUToctetsdispo[debut] = False
-            dictsymb += [[paires[0][0], chr(debut)]]
+            dictsymb += [[paires[0][0], unichr(debut)]]
         else:
             print("Il n y a plus d octets disponible!")
             remplacementpossible = False
@@ -91,6 +92,7 @@ while remplacementpossible == True:
 
 
 temps_execution = time.time() - start_time
+print(h.heap())
 print("Temps d execution : ", time.time() - start_time, " secondes")
 
 print("Longueur = {0}".format(np.ceil(np.log2(nbsymboles))*len(Message)))
