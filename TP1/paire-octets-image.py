@@ -74,8 +74,6 @@ while remplacementpossible == True:
 
     if paires[0][1] > 1:
         #Remplace la paire
-        print(paires)
-        print("La paire ",paires[0][0], " est la plus frequente avec ",paires[0][1], "repetitions")
         #Cherche un octet non utilise
         while debut <0xffff and LUToctetsdispo[debut] == False:
             debut += 1
