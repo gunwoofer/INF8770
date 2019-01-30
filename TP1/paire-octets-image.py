@@ -4,9 +4,10 @@ import numpy as np
 import matplotlib.pyplot as py
 import time
 import regex as re
-from guppy import hpy
+import os
+import psutil
 
-h = hpy()
+# h = hpy()
 print ("Codage paire octets image..")
 
 def rgb2gray(rgb):
@@ -33,12 +34,12 @@ Message = ''.join(imageout)
 # py.show()
 
 #Message = "001100011110001010101011110001101010111111111111110000000000000000110101010100011101010101"
-#Message =""
-#for i in range(33020):
- #   if i < 33020 /2:
-  #      Message += '0'
-   # else:
-    #    Message += '1'
+# Message =""
+# for i in range(90):
+#    if i % 2 == 0:
+#        Message += '0'
+#    else:
+#        Message += '1'
 LUToctetsdispo = [True] * 0xffff
 dictsymb =[Message[0]]
 LUToctetsdispo[ord(Message[0])] = False
@@ -80,9 +81,9 @@ while remplacementpossible == True:
             debut += 1
         if debut < 0xffff:     
             #On substitut
-            Message = Message.replace(paires[0][0],  unichr(debut))
+            Message = Message.replace(paires[0][0],  chr(debut))
             LUToctetsdispo[debut] = False
-            dictsymb += [[paires[0][0], unichr(debut)]]
+            dictsymb += [[paires[0][0], chr(debut)]]
         else:
             print("Il n y a plus d octets disponible!")
             remplacementpossible = False
@@ -92,8 +93,11 @@ while remplacementpossible == True:
 
 
 temps_execution = time.time() - start_time
-print(h.heap())
+# print(h.heap())
 print("Temps d execution : ", time.time() - start_time, " secondes")
+
+process = psutil.Process(os.getpid())
+print(process.memory_info().rss)  # in bytes 
 
 print("Longueur = {0}".format(np.ceil(np.log2(nbsymboles))*len(Message)))
 print("Longueur originale = {0}".format(longueurOriginale))

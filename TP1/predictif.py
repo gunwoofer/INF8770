@@ -4,16 +4,17 @@ import numpy as np
 import matplotlib.pyplot as py
 import time
 from anytree import Node, RenderTree, PreOrderIter, AsciiStyle
-from guppy import hpy
+import os
+import psutil
 
-h = hpy()
+# h = hpy()
 print ("Codage Predictif")
 
 def rgb2gray(rgb):
     return np.dot(rgb[:,:], [0.299, 0.587, 0.114])
 
 fig1 = py.figure(figsize = (10,10))
-imagelue = py.imread('degrade.jpg')
+imagelue = py.imread('RGB.jpg')
 image=imagelue.astype('float')
 image=rgb2gray(image)
 imageout=image.astype('uint8')
@@ -27,16 +28,16 @@ py.imshow(imageout,cmap = py.get_cmap('gray'))
 
 #image = "001100011110001010101011110001101010111111111111110000000000000000110101010100011101010101"
 
-#image =""
-#for i in range(32761):
-#    if i < 32761 / 2:
+# image =""
+# for i in range(90):
+#    if i % 2:
 #       image += '0'
 #    else:
 #        image += '1'
-#image = list(image)
-#image = np.reshape(image,(-1,181))
-#image = image.astype('uint8')
-#imageout=image.astype('uint8')
+# image = list(image)
+# image = np.reshape(image,(-1,10))
+# image = image.astype('uint8')
+# imageout=image.astype('uint8')
 #py.imshow(imageout,cmap = py.get_cmap('gray'))
 #py.show()
 # Debut du Timer
@@ -179,7 +180,10 @@ for i in range(len(Message)):
     longueur += len(substitution[0][1])
 
 #print(MessageCode)
-print(h.heap())
+# print(h.heap())
+process = psutil.Process(os.getpid())
+print(process.memory_info().rss)  # in bytes 
+
 print("Temps d execution : ", time.time() - start_time, " secondes")
 
 print("Longueur = {0}".format(longueur))
