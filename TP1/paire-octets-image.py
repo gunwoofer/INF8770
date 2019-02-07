@@ -34,12 +34,13 @@ Message = ''.join(imageout)
 # py.show()
 
 #Message = "001100011110001010101011110001101010111111111111110000000000000000110101010100011101010101"
-# Message =""
-# for i in range(90):
-#    if i % 2 == 0:
-#        Message += '0'
-#    else:
-#        Message += '1'
+Message =""
+TAILLE = 2**20-1
+for i in range(TAILLE):
+    if i % 2 == 0:
+        Message += '0'
+    else:
+        Message += '1'
 LUToctetsdispo = [True] * 0xffff
 dictsymb =[Message[0]]
 LUToctetsdispo[ord(Message[0])] = False
