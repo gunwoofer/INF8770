@@ -5,7 +5,7 @@ import matplotlib.pyplot as py
 import time
 from anytree import Node, RenderTree, PreOrderIter, AsciiStyle
 import os
-import psutil
+import psutilp
 
 # h = hpy()
 print ("Codage Predictif")
