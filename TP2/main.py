@@ -1,5 +1,6 @@
 import matplotlib.pyplot as py
 import numpy as np
+import scipy.fftpack as dctpack
 
 INDEX_Y = 0
 INDEX_CB = 1
@@ -14,6 +15,7 @@ print ("TP2 INF8770..")
 
 image = py.imread("image4.jpg")
 image = np.array(image)
+image = image.astype('float64')
 
 # https://stackoverflow.com/questions/34913005/color-space-mapping-ycbcr-to-rgb
 def rgb2ycbcr(im):
@@ -66,18 +68,51 @@ def inverseDivision8x8(bloc, result):
             indexbloc = indexbloc + 1
     return result
 
+def dct(image):
+    img = np.zeros_like(image)
+    image[:] -= 128
+    for bloc in image:
+        BlocDCT = dctpack.dct(dctpack.dct(bloc[:, :, 0], axis=0, norm='ortho'), axis=1, norm='ortho')
+        BlocDCT2 = dctpack.dct(dctpack.dct(bloc[:, :, 1], axis=0, norm='ortho'), axis=1, norm='ortho')
+        BlocDCT3 = dctpack.dct(dctpack.dct(bloc[:, :, 2], axis=0, norm='ortho'), axis=1, norm='ortho')
+        bloc[:, :, 0] = BlocDCT
+        bloc[:, :, 1] = BlocDCT2
+        bloc[:, :, 2] = BlocDCT3 
+    return image
+
+def idct(image):
+    img = np.zeros_like(image)
+    for bloc in image:
+        BlocIDCT = dctpack.idct(dctpack.idct(bloc[:, :, 0], axis=0, norm='ortho'), axis=1, norm='ortho')
+        BlocIDCT2 = dctpack.idct(dctpack.idct(bloc[:, :, 1], axis=0, norm='ortho'), axis=1, norm='ortho')
+        BlocIDCT3 = dctpack.idct(dctpack.idct(bloc[:, :, 2], axis=0, norm='ortho'), axis=1, norm='ortho')
+        bloc[:, :, 0] = BlocIDCT
+        bloc[:, :, 1] = BlocIDCT2
+        bloc[:, :, 2] = BlocIDCT3 
+    image[:] += 128
+    return image
+
 
 print("rgb -> YCbCr..")
 image = rgb2ycbcr(image)
 
 print("Division en blocs de 8..")
 imagebloc = division8x8(image)
+imagebloc = imagebloc.astype('float64')
+
+print("DCT..")
+imagedct = dct(imagebloc)
+
+print('IDCT ...')
+imageidct = idct(imagedct)
 
 print("Reconstruction des blocs de 8..")
-image = inverseDivision8x8(imagebloc, image)
+image = inverseDivision8x8(imageidct, image)
 
 print("YCbCr -> rgb..")
 image = ycbcr2rgb(image)
+
+image = image.astype('uint8')
 
 py.imshow(image)
 py.show()
