@@ -76,7 +76,8 @@ def diff(image, image2):
                 print( "L'index ({},{}) est différent. Image1 : {}, image2 : {}".format(i, j, image[i][j], image2[i][j]))
 
 def division8x8(image):
-    bloc8x8 = []
+    bloc8x8 = np.zeros_like(image)
+    bloc8x8.resize(int(bloc8x8.shape[0]/8), int(bloc8x8.shape[1] / 8), 3)
     for row in range(0,image.shape[0] - BLOCK_SIZE, BLOCK_SIZE):
         for column in range(0,image.shape[1] - BLOCK_SIZE, BLOCK_SIZE):
             bloc8x8.append(image[row:row+BLOCK_SIZE,column:column+BLOCK_SIZE])
@@ -85,16 +86,20 @@ def division8x8(image):
 def inverseDivision8x8(image, result):
     for i in range(0,int(result.shape[0] / BLOCK_SIZE - 1)):
         for j in range(0,int(result.shape[1] / BLOCK_SIZE - 1)):
-            print(result[int(i*BLOCK_SIZE):int(i*BLOCK_SIZE+BLOCK_SIZE)][int(j*BLOCK_SIZE):int(j*BLOCK_SIZE+BLOCK_SIZE)].shape)
-            result[int(i*BLOCK_SIZE):int(i*BLOCK_SIZE+BLOCK_SIZE)][int(j*BLOCK_SIZE):int(j*BLOCK_SIZE+BLOCK_SIZE)] = image[i* BLOCK_SIZE+j] [:] [:]
+            result[i*BLOCK_SIZE:i*BLOCK_SIZE+BLOCK_SIZE,j*BLOCK_SIZE:j*BLOCK_SIZE+BLOCK_SIZE,:] = image[i* BLOCK_SIZE+j, :, :]
+    return result
+
 
 image1 = rgb2ycbcr(image)
+print('Etape 2 : Division en bloc 8x8')
 bloc8x8 = division8x8(image1)
-noBloc = np.zeros_like(image1)
 
-inverseDivision8x8(bloc8x8, noBloc)
-image2 = ycbcr2rgb(image1)
+print('Reconstruction de l image')
+noBloc = np.zeros_like(image1)
+noBloc = inverseDivision8x8(bloc8x8, noBloc)
+print('inversion y cb cr')
+image2 = ycbcr2rgb(noBloc)
 
 # diff(image, image2)
-py.imshow(image)
+py.imshow(image2)
 py.show()
