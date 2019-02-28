@@ -15,59 +15,35 @@ print ("TP2 INF8770..")
 image = py.imread("image4.jpg")
 image = np.array(image)
 
-def rgb2ycbcr(imagergb):
-    print ("Etape 1 - Conversion RGB - Y'CbCr..")
-    imageycbcr = np.zeros_like(imagergb)
-    imageycbcr = imageycbcr.astype('float64')
-    for row in range(imagergb.shape[0]):
-        for col in range(imagergb.shape[1]):
-            R = imagergb[row][col][INDEX_R]
-            G = imagergb[row][col][INDEX_G]
-            B = imagergb[row][col][INDEX_B]
-            Y = 0.299 * R + 0.587 * G + 0.114 * B
-            Cb = 128 + 0.564 * (B - Y)
-            Cr = 128 + 0.713 * (R - Y)
-            if (row % 2 == 0 and col % 2 == 0):
-                if imageycbcr.shape[2] == 4:
-                    imageycbcr[row][col] = [Y,Cb,Cr, imagergb[row][col][3]]
-                else:
-                    imageycbcr[row][col] = [Y,Cb,Cr]
-            else:
-                if imageycbcr.shape[2] == 4:
-                    imageycbcr[row][col] = [Y,0,0, imagergb[row][col][3]]
-                else:
-                    imageycbcr[row][col] = [Y,0,0]
-    return imageycbcr
+# https://stackoverflow.com/questions/34913005/color-space-mapping-ycbcr-to-rgb
+def rgb2ycbcr(im):
+    xform = np.array([[.299, .587, .114], [-.1687, -.3313, .5], [.5, -.4187, -.0813]])
+    ycbcr = im.dot(xform.T)
+    ycbcr[:,:,[1,2]] += 128
+    chrominance(ycbcr)
+    return np.uint8(ycbcr)
 
-           
-def ycbcr2rgb(imageycbcr):
-    imagergb = np.zeros_like(imageycbcr)
-    for row in range(imageycbcr.shape[0]):
-        for col in range(imageycbcr.shape[1]):
+def chrominance(im):
+    for row in range(im.shape[0]):
+        for col in range(im.shape[1]):
             oldi = row
             oldj = col
-            Y = imageycbcr[row][col][0]
-            if (row % 2 == 0 and col % 2 == 0):
-                Cb = imageycbcr[row][col][INDEX_CB]
-                Cr = imageycbcr[row][col][INDEX_CR]
-            else:
-                if (row % 2 == 1):
-                    oldi = row - 1
-                if (col % 2 == 1):
-                    oldj = col - 1
-                Cb = imageycbcr[oldi][oldj][INDEX_CB]
-                Cr = imageycbcr[oldi][oldj][INDEX_CR]
+            if (row % 2 == 1):
+                oldi = row - 1
+            if (col % 2 == 1):
+                oldj = col - 1
+            im[row][col][INDEX_CB] = im[oldi][oldj][INDEX_CB]
+            im[row][col][INDEX_CR] = im[oldi][oldj][INDEX_CR]
 
-            Y = imageycbcr[row][col][INDEX_Y]
-
-            R = Y + (1.403 * (Cr - 128))
-            G = Y - (0.714 * (Cr - 128)) - (0.344 * (Cb - 128))
-            B = Y + (1.773 * (Cb - 128))
-            if imageycbcr.shape[2] == 4:
-                imagergb[row][col] = [R,G,B, imageycbcr[row][col][3]]
-            else:
-                imagergb[row][col] = [R,G,B]
-    return imagergb.astype('uint8')
+# https://stackoverflow.com/questions/34913005/color-space-mapping-ycbcr-to-rgb
+def ycbcr2rgb(im):
+    xform = np.array([[1, 0, 1.402], [1, -0.34414, -.71414], [1, 1.772, 0]])
+    rgb = im.astype(np.float)
+    rgb[:,:,[1,2]] -= 128
+    rgb = rgb.dot(xform.T)
+    np.putmask(rgb, rgb > 255, 255)
+    np.putmask(rgb, rgb < 0, 0)
+    return np.uint8(rgb)
 
 def diff(image, image2):
     for i in range(image.shape[0]):
@@ -91,19 +67,17 @@ def inverseDivision8x8(bloc, result):
     return result
 
 
-# image1 = rgb2ycbcr(image)
-print('Etape 2 : Division en bloc 8x8')
-bloc8x8 = division8x8(image)
+print("rgb -> YCbCr..")
+image = rgb2ycbcr(image)
 
-print('Reconstruction de l image')
-noBloc = np.zeros_like(image)
-image2 = inverseDivision8x8(bloc8x8, noBloc)
+print("Division en blocs de 8..")
+imagebloc = division8x8(image)
 
-# print('inversion y cb cr')
-# image2 = ycbcr2rgb(image1)
+print("Reconstruction des blocs de 8..")
+image = inverseDivision8x8(imagebloc, image)
 
-# diff(image, image2)
+print("YCbCr -> rgb..")
+image = ycbcr2rgb(image)
+
 py.imshow(image)
-py.show()
-py.imshow(image2)
 py.show()
