@@ -9,12 +9,12 @@ INDEX_R = 0
 INDEX_G = 1
 INDEX_B = 2
 
+BLOCK_SIZE = 8
 print ("TP2 INF8770..")
 
 image = py.imread("image2.jpeg")
 image = np.array(image)
-
-
+test = 5
 def rgb2ycbcr(imagergb):
     print ("Etape 1 - Conversion RGB - Y'CbCr..")
     imageycbcr = np.zeros_like(imagergb)
@@ -28,9 +28,15 @@ def rgb2ycbcr(imagergb):
             Cb = 128 + 0.564 * (B - Y)
             Cr = 128 + 0.713 * (R - Y)
             if (row % 2 == 0 and col % 2 == 0):
-                imageycbcr[row][col] = [Y,Cb,Cr]
+                if imageycbcr.shape[2] == 4:
+                    imageycbcr[row][col] = [Y,Cb,Cr, imagergb[row][col][3]]
+                else:
+                    imageycbcr[row][col] = [Y,Cb,Cr]
             else:
-                imageycbcr[row][col] = [Y,0,0]
+                if imageycbcr.shape[2] == 4:
+                    imageycbcr[row][col] = [Y,0,0, imagergb[row][col][3]]
+                else:
+                    imageycbcr[row][col] = [Y,0,0]
     return imageycbcr
 
            
@@ -57,7 +63,10 @@ def ycbcr2rgb(imageycbcr):
             R = Y + (1.403 * (Cr - 128))
             G = Y - (0.714 * (Cr - 128)) - (0.344 * (Cb - 128))
             B = Y + (1.773 * (Cb - 128))
-            imagergb[row][col] = [R,G,B]
+            if imageycbcr.shape[2] == 4:
+                imagergb[row][col] = [R,G,B, imageycbcr[row][col][3]]
+            else:
+                imagergb[row][col] = [R,G,B]
     return imagergb.astype('uint8')
 
 def diff(image, image2):
@@ -65,7 +74,25 @@ def diff(image, image2):
         for j in range(image.shape[1]):
             if (image[i][j] != image2[i][j]).any():
                 print( "L'index ({},{}) est différent. Image1 : {}, image2 : {}".format(i, j, image[i][j], image2[i][j]))
+
+def division8x8(image):
+    bloc8x8 = []
+    for row in range(0,image.shape[0] - BLOCK_SIZE, BLOCK_SIZE):
+        for column in range(0,image.shape[1] - BLOCK_SIZE, BLOCK_SIZE):
+            bloc8x8.append(image[row:row+BLOCK_SIZE,column:column+BLOCK_SIZE])
+    return bloc8x8
+
+def inverseDivision8x8(image, result):
+    for i in range(0,int(result.shape[0] / BLOCK_SIZE - 1)):
+        for j in range(0,int(result.shape[1] / BLOCK_SIZE - 1)):
+            print(result[int(i*BLOCK_SIZE):int(i*BLOCK_SIZE+BLOCK_SIZE)][int(j*BLOCK_SIZE):int(j*BLOCK_SIZE+BLOCK_SIZE)].shape)
+            result[int(i*BLOCK_SIZE):int(i*BLOCK_SIZE+BLOCK_SIZE)][int(j*BLOCK_SIZE):int(j*BLOCK_SIZE+BLOCK_SIZE)] = image[i* BLOCK_SIZE+j] [:] [:]
+
 image1 = rgb2ycbcr(image)
+bloc8x8 = division8x8(image1)
+noBloc = np.zeros_like(image1)
+
+inverseDivision8x8(bloc8x8, noBloc)
 image2 = ycbcr2rgb(image1)
 
 # diff(image, image2)
