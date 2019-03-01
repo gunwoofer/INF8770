@@ -11,6 +11,16 @@ INDEX_G = 1
 INDEX_B = 2
 
 BLOCK_SIZE = 8
+
+Quant = np.matrix('1 1 1 1 1 1 1 1;\
+1 1 1 1 1 1 1 1;\
+1 1 1 1 1 1 1 1;\
+1 1 1 1 1 1 1 1;\
+1 1 1 1 1 1 1 1;\
+1 1 1 1 1 1 1 1;\
+1 1 1 1 1 1 1 1;\
+1 1 1 1 1 1 1 1').astype('float')
+
 print ("TP2 INF8770..")
 
 image = py.imread("image4.jpg")
@@ -92,7 +102,27 @@ def idct(image):
     image[:] += 128
     return image
 
+def quantification(image):
+    for bloc in image:
+        bloc[:, :, 0] = np.round(np.divide(bloc[:, :, 0], Quant))
+        bloc[:, :, 1] = np.round(np.divide(bloc[:, :, 1], Quant))
+        bloc[:, :, 2] = np.round(np.divide(bloc[:, :, 2], Quant))
+    return image
 
+
+def dequantification(image):
+    for bloc in image:
+        bloc[:, :, 0] = np.round(np.multiply(bloc[:, :, 0], Quant))
+        bloc[:, :, 1] = np.round(np.multiply(bloc[:, :, 1], Quant))
+        bloc[:, :, 2] = np.round(np.multiply(bloc[:, :, 2], Quant))
+    return image
+
+
+def zigzag(image):
+    for bloc in image:
+        bloc = bloc[0] + bloc[1] + bloc[2]
+    test = 2
+    
 print("rgb -> YCbCr..")
 image = rgb2ycbcr(image)
 
@@ -103,8 +133,18 @@ imagebloc = imagebloc.astype('float64')
 print("DCT..")
 imagedct = dct(imagebloc)
 
+print('quantification..')
+imageQuantifie = quantification(imagedct)
+
+print("zigzag..")
+imageZigzag = zigzag(imageQuantifie)
+
+print('dequantification..')
+imageDequantifie = dequantification(imageQuantifie)
+
+
 print('IDCT ...')
-imageidct = idct(imagedct)
+imageidct = idct(imageDequantifie)
 
 print("Reconstruction des blocs de 8..")
 image = inverseDivision8x8(imageidct, image)
