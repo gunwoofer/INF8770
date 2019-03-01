@@ -117,11 +117,29 @@ def dequantification(image):
         bloc[:, :, 2] = np.round(np.multiply(bloc[:, :, 2], Quant))
     return image
 
+# https://medium.com/100-days-of-algorithms/day-63-zig-zag-51a41127f31?fbclid=IwAR2aFNqEVXFlROq9GJ9wJ7L3ura1M-EHb8666E2KKrZ9Sne30-xfVKByxjY
+def zig_zag_index(k, n):
+    # upper side of interval
+    if k >= n * (n + 1) // 2:
+        i, j = zig_zag_index(n * n - 1 - k, n)
+        return n - 1 - i, n - 1 - j
+    # lower side of interval
+    i = int((np.sqrt(1 + 8 * k) - 1) / 2)
+    j = k - i * (i + 1) // 2
+    return (j, i - j) if i & 1 else (i - j, j)
+
 
 def zigzag(image):
+    result = []
     for bloc in image:
-        bloc = bloc[0] + bloc[1] + bloc[2]
-    test = 2
+        print(bloc)
+        array = np.zeros((BLOCK_SIZE*BLOCK_SIZE, 3))
+        for k in range (BLOCK_SIZE * BLOCK_SIZE):
+            t = zig_zag_index(k, BLOCK_SIZE)
+            array[k] = bloc[t]
+        array.flatten()
+        result.append(array)
+       
     
 print("rgb -> YCbCr..")
 image = rgb2ycbcr(image)
