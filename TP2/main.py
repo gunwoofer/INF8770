@@ -132,15 +132,25 @@ def zig_zag_index(k, n):
 def zigzag(image):
     result = []
     for bloc in image:
-        print(bloc)
         array = np.zeros((BLOCK_SIZE*BLOCK_SIZE, 3))
         for k in range (BLOCK_SIZE * BLOCK_SIZE):
             t = zig_zag_index(k, BLOCK_SIZE)
             array[k] = bloc[t]
         array.flatten()
         result.append(array)
+    return result
        
-    
+def inverseZigZag(image):
+    result = []
+    for bloc in image:
+        M = np.zeros((BLOCK_SIZE, BLOCK_SIZE, 3), dtype=float)
+        for k in range (BLOCK_SIZE * BLOCK_SIZE):
+            t = zig_zag_index(k, BLOCK_SIZE)
+            M[t] = bloc[k]
+        result.append(M)  
+    return result
+
+
 print("rgb -> YCbCr..")
 image = rgb2ycbcr(image)
 
@@ -156,6 +166,9 @@ imageQuantifie = quantification(imagedct)
 
 print("zigzag..")
 imageZigzag = zigzag(imageQuantifie)
+
+print("InverseZigZag")
+imageInverseZigZag = inverseZigZag(imageZigzag)
 
 print('dequantification..')
 imageDequantifie = dequantification(imageQuantifie)
