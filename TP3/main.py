@@ -3,6 +3,8 @@ import cv2
 import numpy as np
 
 FILENAME = "julia.avi" 
+cuts = []
+fades = []
 
 def main():
     print("TP3 INF8770..")
@@ -14,14 +16,23 @@ def main():
         return
     else:
         print("Traitement de la video %s..." % FILENAME)
- 
-    while True:
-        (rv, im) = cap.read()   
-        if not rv:
-            break
+   
+    (rv, im) = cap.read()  
+    while rv:
         # Traitement image par image
-        test = 2
- 
+        histoR = im[:,:,0]
+        (rv, im) = cap.read()  
+
+        # Histogrammes
+        histoR = cv2.calcHist([im], [0], None, [256], [0,256])
+        histoG = cv2.calcHist([im], [1], None, [256], [0,256])
+        histoB = cv2.calcHist([im], [2], None, [256], [0,256])
+        
+        # Concatenation
+        histo = np.concatenate((histoR, histoG, histoB))
+
+
+
     cap.release()
  
  
