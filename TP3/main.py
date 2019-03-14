@@ -10,12 +10,17 @@ def main():
     cap.open(FILENAME)
  
     if not cap.isOpened():
-        print("Fatal error - could not open video %s." % FILENAME)
+        print("Erreur pendant l'ouverture de la video %s" % FILENAME)
         return
     else:
-        print("Parsing video %s..." % FILENAME)
+        print("Traitement de la video %s..." % FILENAME)
  
-    
+    while True:
+        (rv, im) = cap.read()   
+        if not rv:
+            break
+        # Traitement image par image
+        test = 2
  
     cap.release()
  
