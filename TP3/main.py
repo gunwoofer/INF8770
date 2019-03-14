@@ -10,6 +10,27 @@ FILENAME = "julia.avi"
 cuts = []
 fades = []
 
+
+def histo(im):
+    histoR = cv2.calcHist([im], [0], None, [256], [0,256])
+    histoG = cv2.calcHist([im], [1], None, [256], [0,256])
+    histoB = cv2.calcHist([im], [2], None, [256], [0,256])
+
+    
+    # Concatenation
+    histo = np.concatenate((histoR, histoG, histoB))
+    
+    # Quantification
+    for i in range(0,256,8):
+        newHist.append(histo[i:i+8].sum())
+
+    # Difference avec la trame precedante
+    # newnewHist = np.array(newHist)
+
+
+# np.where(np.array(histoDiffTrame) > SEUIL_CUT)
+    histoDiffTrame = np.array(histoDiffTrame)
+
 def rgb2gray(rgb):
     return np.dot(rgb[:,:], [0.299, 0.587, 0.114])
 
@@ -52,6 +73,11 @@ def main():
         # Quantification
         for i in range(0,256,8):
             newHist.append(histo[i:i+8].sum())
+
+        hist1 = histo(im[:int(im.shape[0]/2), :int(im.shape[1]/2])])
+        hist2 = histo(im[:int(im.shape[0]/2), int(im.shape[1]/2]):])
+        hist3 = histo(im[int(im.shape[0]/2):, :int(im.shape[1]/2])])
+        hist4 = histo(im[int(im.shape[0]/2):, int(im.shape[1]/2]):])
 
         # Difference avec la trame precedante
         # newnewHist = np.array(newHist)
