@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
-SEUIL_CUT = 50000
+SEUIL_CUT = 55000
 SEUIL_FADE = (10000, 50000)
 FILENAME = "julia.avi" 
 cuts = []
@@ -38,16 +38,16 @@ def main():
         # Traitement image par image
         images.append(im)
         newHist = []
-        im = rgb2gray(im).astype("uint8")
+        # im = rgb2gray(im).astype("uint8")
 
         # Histogrammes
-        histo = cv2.calcHist([im], [0], None, [256], [0,256])
-        # histoG = cv2.calcHist([im], [1], None, [256], [0,256])
-        # histoB = cv2.calcHist([im], [2], None, [256], [0,256])
+        histoR = cv2.calcHist([im], [0], None, [256], [0,256])
+        histoG = cv2.calcHist([im], [1], None, [256], [0,256])
+        histoB = cv2.calcHist([im], [2], None, [256], [0,256])
 
         
         # Concatenation
-        # histo = np.concatenate((histoR, histoG, histoB))
+        histo = np.concatenate((histoR, histoG, histoB))
         
         # Quantification
         for i in range(0,256,8):
