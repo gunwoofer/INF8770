@@ -85,14 +85,6 @@ def main():
     cuts = np.where(np.array(histoDiffTrame) > SEUIL_CUT)
 
 
-    img1 = images[345]
-    img2 = images[350 + 1]
-    f = plt.figure()
-    f.add_subplot(1,2, 1)
-    plt.imshow(cv2.cvtColor(img1,cv2.COLOR_BGR2RGB))
-    f.add_subplot(1,2, 2)
-    plt.imshow(cv2.cvtColor(img2,cv2.COLOR_BGR2RGB))
-    plt.show(block=True)
     # Affichage des cuts
     for cut in cuts[0]:
         img1 = images[cut]
