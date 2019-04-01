@@ -22,10 +22,10 @@ def histo(im):
     
     # Quantification
     for i in range(0,256,8):
-        newHist.append(histo[i:i+8].sum())
+        histQuantified.append(histo[i:i+8].sum())
 
     # Difference avec la trame precedante
-    # newnewHist = np.array(newHist)
+    # newhistQuantified = np.array(histQuantified)
 
 
 # np.where(np.array(histoDiffTrame) > SEUIL_CUT)
@@ -58,32 +58,32 @@ def main():
     while rv:
         # Traitement image par image
         images.append(im)
-        newHist = []
-        # im = rgb2gray(im).astype("uint8")
+        histQuantified = []
+        im = rgb2gray(im).astype("uint8")
 
         # Histogrammes
-        histoR = cv2.calcHist([im], [0], None, [256], [0,256])
-        histoG = cv2.calcHist([im], [1], None, [256], [0,256])
-        histoB = cv2.calcHist([im], [2], None, [256], [0,256])
-
+        # histoR = cv2.calcHist([im], [0], None, [256], [0,256])
+        # histoG = cv2.calcHist([im], [1], None, [256], [0,256])
+        # histoB = cv2.calcHist([im], [2], None, [256], [0,256])
+        histo = cv2.calcHist([im], [0], None, [256], [0,256])
         
         # Concatenation
-        histo = np.concatenate((histoR, histoG, histoB))
+        # histo = np.concatenate((histoR, histoG, histoB))
         
         # Quantification
         for i in range(0,256,8):
-            newHist.append(histo[i:i+8].sum())
+            histQuantified.append(histo[i:i+8].sum())
 
-        hist1 = histo(im[:int(im.shape[0]/2), :int(im.shape[1]/2])])
-        hist2 = histo(im[:int(im.shape[0]/2), int(im.shape[1]/2]):])
-        hist3 = histo(im[int(im.shape[0]/2):, :int(im.shape[1]/2])])
-        hist4 = histo(im[int(im.shape[0]/2):, int(im.shape[1]/2]):])
+        # hist1 = histo(im[:int(im.shape[0]/2), :int(im.shape[1]/2])])
+        # hist2 = histo(im[:int(im.shape[0]/2), int(im.shape[1]/2]):])
+        # hist3 = histo(im[int(im.shape[0]/2):, :int(im.shape[1]/2])])
+        # hist4 = histo(im[int(im.shape[0]/2):, int(im.shape[1]/2]):])
 
         # Difference avec la trame precedante
-        # newnewHist = np.array(newHist)
+        # newhistQuantified = np.array(histQuantified)
         if indexTrame >= 1:
-            histoDiffTrame.append(diffTrame(np.array(newHist), np.array(histoPrec)))
-        histoPrec = newHist
+            histoDiffTrame.append(diffTrame(np.array(histQuantified), np.array(histoPrec)))
+        histoPrec = histQuantified
 
         (rv, im) = cap.read()  
         indexTrame = indexTrame + 1
