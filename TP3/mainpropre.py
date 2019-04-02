@@ -4,8 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
-SEUIL_CUT = 8000
-SEUIL_FADE = (10000, 50000)
+SEUIL_CUT = 10000
+SEUIL_FADE = (2000, 10000)
 FILENAME = "julia.avi" 
 cuts = []
 fades = []
@@ -76,9 +76,9 @@ def main():
             histQuantified.append(histo[i:i+8].sum())
         liste_histo.append(histQuantified)
         # Difference avec la trame precedante
-        if indexTrame > 1:
+        if indexTrame > 0:
             # histoDiffTrame.append(diffTrame(np.array(histQuantified), np.array(histoPrec)))
-            histoDiffTrame.append(diffTrame2(np.array(liste_histo[indexTrame]), np.array(liste_histo[indexTrame - 1]), liste_histo[indexTrame - 2]))
+            histoDiffTrame.append(abs(diffTrame2(np.array(liste_histo[indexTrame]), np.array(liste_histo[indexTrame - 1]), liste_histo[indexTrame - 2])))
 
         histoPrec = histQuantified
         
@@ -89,19 +89,26 @@ def main():
 
     histoDiffTrame = np.array(histoDiffTrame)
     cuts = np.where(np.array(histoDiffTrame) > SEUIL_CUT)
-
+    fades = np.where(np.logical_and(np.array(histoDiffTrame) > SEUIL_FADE[0], np.array(histoDiffTrame) < SEUIL_FADE[1]))
+    fades = list(fades[0])
+    # for cut in cuts[0]:
+    #     fades.remove(cut)
 
     # Affichage des cuts
     for cut in cuts[0]:
-        img1 = images[cut]
-        img2 = images[cut + 1]
-        f = plt.figure()
-        f.add_subplot(1,2, 1)
-        plt.imshow(img1)
-        f.add_subplot(1,2, 2)
-        plt.imshow(img2)
+        # img1 = images[cut]
+        # img2 = images[cut + 1]
+        # f = plt.figure()
+        # f.add_subplot(1,2, 1)
+        # plt.imshow(img1)
+        # f.add_subplot(1,2, 2)
+        # plt.imshow(img2)
         print("Image numero : " + str(cut))
-        plt.show(block=True)
+        # plt.show(block=True)
+
+    for fade in fades:
+        print(" fades : " + str(fade))
+
     plt.plot(histoDiffTrame)
     plt.show()
 
