@@ -23,6 +23,22 @@ def diffTrame(histo1, histo2):
 def diffTrame2(histo1, histo2, histo3):
     return diffTrame(histo3, histo2) - diffTrame(histo2, histo1)
 
+def generateMask(im):
+    masques = []
+    for i in range(0, 4):
+        for j in range(0, 4):        
+            masque = np.zeros_like(rgb2gray(im).astype("uint8"))
+            masque[int(im.shape[0]*i/4):int(im.shape[0]*(i+1) / 4), int(im.shape[1]*j/4):int(im.shape[1]*(j+1) / 4)] = 1
+            masques.append(masque)
+    return masques
+
+def generateHist(im, masks):
+    hists = []
+    for mask in masks:
+        hist = cv2.calcHist([im], [0], mask, [256], [0,256])
+        hists.append(hist)
+    return hists
+
 def main():
     print("TP3 INF8770..")
     cap = cv2.VideoCapture()
@@ -38,14 +54,7 @@ def main():
     indexTrame = 0
 
     # Masques
-    masqueHG = np.zeros_like(rgb2gray(im).astype("uint8"))
-    masqueHG[:int(im.shape[0]/2), :int(im.shape[1]/2)] = 1
-    masqueBG = np.zeros_like(rgb2gray(im).astype("uint8"))
-    masqueBG[:int(im.shape[0]/2), int(im.shape[1]/2):] = 1
-    masqueHD = np.zeros_like(rgb2gray(im).astype("uint8"))
-    masqueHD[int(im.shape[0]/2):, :int(im.shape[1]/2)] = 1
-    masqueBD = np.zeros_like(rgb2gray(im).astype("uint8"))
-    masqueBD[int(im.shape[0]/2):, int(im.shape[1]/2):] = 1
+    masques = generateMask(im)
 
     histoDiffTrame = []
     liste_histo = []
@@ -53,16 +62,13 @@ def main():
         # Traitement image par image
         images.append(im)
         histQuantified = []
-        im = rgb2gray(im).astype("uint8")
+        # im = rgb2gray(im).astype("uint8")
 
         # Histogrammes
-        histoHG = cv2.calcHist([im], [0], masqueHG, [256], [0,256])
-        histoBG = cv2.calcHist([im], [0], masqueBG, [256], [0,256])
-        histoHD = cv2.calcHist([im], [0], masqueHD, [256], [0,256])
-        histoBD = cv2.calcHist([im], [0], masqueBD, [256], [0,256])
+        hists = generateHist(im, masques)
 
         # Concatenation
-        histo = np.concatenate((histoHG, histoBG, histoHD, histoBD))
+        histo = np.concatenate(hists)
         
         
         # Quantification
